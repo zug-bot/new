@@ -3,21 +3,36 @@
 
 import * as PIXI from 'pixi.js'
 import { TILE_W, TILE_H, cartToIso } from './engine.js'
+import { SpriteAnimator, CharacterController } from './spriteAnimator.js'
 
 export async function createRenderer() {
   const app = new PIXI.Application();
   await app.init({ background: 0x0e1220, resizeTo: window });
   document.getElementById('app').appendChild(app.canvas);
 
-  // Load textures (placeholders)
-  const assets = await PIXI.Assets.load({
-    hero: '/assets/sprites/hero_idle.png',
+  // Load spritesheets and textures
+  let knightSheet;
+  try {
+    knightSheet = await PIXI.Assets.load('/assets/sprites/characters/knight_spritesheet.json');
+  } catch (e) {
+    console.warn('Knight spritesheet not found, using fallback');
+  }
+  
+  // Load other assets
+  const assetList = {
     goblin: '/assets/sprites/enemy_goblin.png',
     tile: '/assets/sprites/iso_tile_placeholder.png',
     bg: '/assets/backgrounds/forest_bg.png',
     light: '/assets/lights/light_glow.png',
     shadow: '/assets/lights/shadow_blob.png'
-  });
+  };
+  
+  // Add fallback hero if no spritesheet
+  if (!knightSheet) {
+    assetList.heroFallback = '/assets/sprites/hero_idle.png';
+  }
+  
+  const assets = await PIXI.Assets.load(assetList);
 
   // Background
   const bg = new PIXI.Sprite(assets.bg);
@@ -44,8 +59,20 @@ export async function createRenderer() {
   // Hero
   const heroShadow = new PIXI.Sprite(assets.shadow);
   heroShadow.anchor.set(0.5, 0.5);
-  const hero = new PIXI.Sprite(assets.hero);
-  hero.anchor.set(0.5, 0.8);
+  
+  let hero, heroController;
+  if (knightSheet) {
+    // Use animated sprite
+    const heroAnimator = new SpriteAnimator(knightSheet, 0.15);
+    hero = heroAnimator.sprite;
+    heroController = new CharacterController(heroAnimator);
+    heroController.animator.play('idle');
+  } else {
+    // Fallback to static sprite
+    hero = new PIXI.Sprite(assets.heroFallback);
+    hero.anchor.set(0.5, 0.8);
+  }
+  
   hero.x = app.renderer.width * 0.5;
   hero.y = app.renderer.height * 0.65 - TILE_H * 0.5;
   heroShadow.x = hero.x;
@@ -92,12 +119,26 @@ export async function createRenderer() {
     if (keys.has('KeyS') || keys.has('ArrowDown')) dy += 1;
     if (keys.has('KeyA') || keys.has('ArrowLeft')) dx -= 1;
     if (keys.has('KeyD') || keys.has('ArrowRight')) dx += 1;
+    
+    // Update character controller if available
+    if (heroController) {
+      heroController.move(dx, dy);
+      heroController.update(frame.deltaTime / 60); // Convert to seconds
+      
+      // Handle attack
+      if (keys.has('Space')) {
+        heroController.attack();
+      }
+    }
+    
     if (dx || dy) {
       // Move along iso axes (approximate)
       hero.x += (dx - dy) * (TILE_W/4) * (frame.deltaTime/16) * speed * 0.5;
       hero.y += (dx + dy) * (TILE_H/4) * (frame.deltaTime/16) * speed * 0.5;
       heroShadow.x = hero.x;
       heroShadow.y = hero.y + 24;
+    } else if (heroController) {
+      heroController.stopMoving();
     }
   });
 

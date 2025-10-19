@@ -1,0 +1,101 @@
+{
+  "frames": {
+    "knight_idle_0": {
+      "frame": {"x": 0, "y": 0, "w": 32, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 32, "h": 48},
+      "sourceSize": {"w": 32, "h": 48}
+    },
+    "knight_idle_1": {
+      "frame": {"x": 32, "y": 0, "w": 32, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 32, "h": 48},
+      "sourceSize": {"w": 32, "h": 48}
+    },
+    "knight_idle_2": {
+      "frame": {"x": 64, "y": 0, "w": 32, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 32, "h": 48},
+      "sourceSize": {"w": 32, "h": 48}
+    },
+    "knight_idle_3": {
+      "frame": {"x": 96, "y": 0, "w": 32, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 32, "h": 48},
+      "sourceSize": {"w": 32, "h": 48}
+    },
+    "knight_walk_0": {
+      "frame": {"x": 0, "y": 48, "w": 32, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 32, "h": 48},
+      "sourceSize": {"w": 32, "h": 48}
+    },
+    "knight_walk_1": {
+      "frame": {"x": 32, "y": 48, "w": 32, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 32, "h": 48},
+      "sourceSize": {"w": 32, "h": 48}
+    },
+    "knight_walk_2": {
+      "frame": {"x": 64, "y": 48, "w": 32, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 32, "h": 48},
+      "sourceSize": {"w": 32, "h": 48}
+    },
+    "knight_walk_3": {
+      "frame": {"x": 96, "y": 48, "w": 32, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 32, "h": 48},
+      "sourceSize": {"w": 32, "h": 48}
+    },
+    "knight_attack_0": {
+      "frame": {"x": 0, "y": 96, "w": 48, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 48, "h": 48},
+      "sourceSize": {"w": 48, "h": 48}
+    },
+    "knight_attack_1": {
+      "frame": {"x": 48, "y": 96, "w": 48, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 48, "h": 48},
+      "sourceSize": {"w": 48, "h": 48}
+    },
+    "knight_attack_2": {
+      "frame": {"x": 96, "y": 96, "w": 48, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 48, "h": 48},
+      "sourceSize": {"w": 48, "h": 48}
+    },
+    "knight_attack_3": {
+      "frame": {"x": 144, "y": 96, "w": 48, "h": 48},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 48, "h": 48},
+      "sourceSize": {"w": 48, "h": 48}
+    }
+  },
+  "animations": {
+    "idle": ["knight_idle_0", "knight_idle_1", "knight_idle_2", "knight_idle_3"],
+    "walk": ["knight_walk_0", "knight_walk_1", "knight_walk_2", "knight_walk_3"],
+    "attack": ["knight_attack_0", "knight_attack_1", "knight_attack_2", "knight_attack_3"]
+  },
+  "meta": {
+    "app": "isometric-souls",
+    "version": "1.0",
+    "image": "knight_spritesheet.png",
+    "format": "RGBA8888",
+    "size": {"w": 256, "h": 256},
+    "scale": "1"
+  }
+}

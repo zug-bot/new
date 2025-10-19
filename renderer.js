@@ -4,12 +4,106 @@
 import * as PIXI from 'pixi.js'
 import { TILE_W, TILE_H, cartToIso } from './engine.js'
 
+async function imageExists(url) {
+  try {
+    const res = await fetch(url, { method: 'HEAD' });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function extractPortraitRegions(img) {
+  // Heuristic: scan the bottom band to locate the four portrait heads.
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+
+  const bandHeight = Math.floor(img.height * 0.18); // bottom ~18%
+  const bandTop = img.height - bandHeight;
+  const { data, width } = ctx.getImageData(0, bandTop, img.width, bandHeight);
+
+  // Column alpha sums
+  const colSums = new Array(width).fill(0);
+  for (let y = 0; y < bandHeight; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * 4 + 3; // alpha channel
+      colSums[x] += data[idx];
+    }
+  }
+
+  // Group contiguous columns with significant alpha
+  const threshold = 20 * bandHeight; // tune for transparency
+  const groups = [];
+  let start = -1;
+  for (let x = 0; x < width; x++) {
+    const solid = colSums[x] > threshold;
+    if (solid && start === -1) start = x;
+    if ((!solid || x === width - 1) && start !== -1) {
+      const end = solid && x === width - 1 ? x : x - 1;
+      const w = end - start + 1;
+      if (w >= 32 && w <= 160) {
+        groups.push({ x0: start, x1: end });
+      }
+      start = -1;
+    }
+  }
+
+  // Refine each group to a tight bounding box in the band
+  const rects = groups.map((g) => {
+    let yMin = bandHeight - 1;
+    let yMax = 0;
+    for (let y = 0; y < bandHeight; y++) {
+      for (let x = g.x0; x <= g.x1; x++) {
+        const idx = (y * width + x) * 4 + 3;
+        if (data[idx] > 0) {
+          if (y < yMin) yMin = y;
+          if (y > yMax) yMax = y;
+        }
+      }
+    }
+    const xMin = g.x0;
+    const xMax = g.x1;
+    return {
+      x: xMin,
+      y: bandTop + yMin,
+      w: xMax - xMin + 1,
+      h: yMax - yMin + 1,
+    };
+  });
+
+  // Sort left-to-right, pick first four likely portraits
+  rects.sort((a, b) => a.x - b.x);
+  return rects.slice(0, 4);
+}
+
+function textureFromRect(img, rect) {
+  const c = document.createElement('canvas');
+  c.width = rect.w;
+  c.height = rect.h;
+  const cctx = c.getContext('2d');
+  cctx.drawImage(img, rect.x, rect.y, rect.w, rect.h, 0, 0, rect.w, rect.h);
+  return PIXI.Texture.from(c);
+}
+
 export async function createRenderer() {
   const app = new PIXI.Application();
   await app.init({ background: 0x0e1220, resizeTo: window });
   document.getElementById('app').appendChild(app.canvas);
 
-  // Load textures (placeholders)
+  // Load textures (placeholders + optional knight sheet)
   const assets = await PIXI.Assets.load({
     hero: '/assets/sprites/hero_idle.png',
     goblin: '/assets/sprites/enemy_goblin.png',
@@ -64,6 +158,27 @@ export async function createRenderer() {
   enemyShadow.y = enemy.y + 24;
   app.stage.addChild(enemyShadow);
   app.stage.addChild(enemy);
+
+  // If knight spritesheet exists, extract portraits for hero/enemy
+  const knightUrl = '/assets/sprites/male_knight.png';
+  if (await imageExists(knightUrl)) {
+    try {
+      const img = await loadImage(knightUrl);
+      const rects = extractPortraitRegions(img);
+      if (rects.length >= 2) {
+        const heroTex = textureFromRect(img, rects[0]);
+        const enemyTex = textureFromRect(img, rects[rects.length - 1]);
+        hero.texture = heroTex;
+        enemy.texture = enemyTex;
+        const targetHeight = 96; // scale portraits to a readable size
+        hero.scale.set(targetHeight / hero.height);
+        enemy.scale.set(targetHeight / enemy.height);
+      }
+    } catch (e) {
+      // Ignore, keep placeholder textures
+      console.warn('Failed to extract knight portraits:', e);
+    }
+  }
 
   // Light overlay (additive glow)
   const light = new PIXI.Sprite(assets.light);

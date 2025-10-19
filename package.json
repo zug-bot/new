@@ -1,0 +1,19 @@
+{
+  "name": "isometric-souls-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "pixi-viewport": "^5.0.1",
+    "pixi.js": "^7.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^5.4.9"
+  }
+}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2.5D Isometric Souls Prototype</title>
+    <style>
+      html, body, #app {
+        height: 100%;
+        margin: 0;
+        background: #0f0f1a;
+        overflow: hidden;
+      }
+      #overlay {
+        position: fixed;
+        left: 0; right: 0; top: 0; padding: 8px 12px;
+        color: #cbd5e1; font-family: system-ui, sans-serif; font-size: 12px;
+        mix-blend-mode: difference;
+        pointer-events: none;
+      }
+      .kbd { border: 1px solid #64748b; border-bottom-width: 3px; padding: 0 4px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="overlay">
+      WASD move • Shift parry • Space attack • Q/E rotate camera
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

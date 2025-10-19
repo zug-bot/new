@@ -26,6 +26,9 @@ You must source or create art assets yourself. Good sources:
 
 **Make sure to check licenses and attribution requirements!**
 
+### Legal note on ripped assets
+Do not ship ripped assets from commercial games. Sites like `spriters-resource.com` host rips intended for study/reference; they are not cleared for redistribution. Use legally licensed assets (itch.io, OpenGameArt, Kenney, etc.) for any public builds. Maintain `docs/ATTRIBUTIONS.md` if you include third‑party art.
+
 ## Example Directory Structure
 
 ```
@@ -56,12 +59,38 @@ README.md
 
 ## Placeholder Sprites
 
-Until you find art, use colored rectangles or basic isometric tiles as placeholders.
+Until you find art, use colored rectangles or basic isometric tiles as placeholders. This repo renders placeholder rectangles and shadow blobs programmatically.
 
 ---
 use. https://www.spriters-resource.com/ ccreate a beautiful 2.5d isometric souls/sekiro like - art inspired by triangle strategy octopath traveller but with real time difficult combat with parrying. Webcrawl through the internet to find appropriate sprites but use 2.5d and make it beautiful with lighting effects and shadows
 ## References
 
 - [Octopath Traveler Art Style Analysis](https://www.youtube.com/watch?v=9wZ9rV1dXDc)
-- [Triangle Strategy Pixel Art](https://www.spriters-resource.com/pc_computer/trianglestrategy/)
+- [Triangle Strategy Pixel Art](https://www.spriters-resource.com/pc_computer/trianglestrategy/) — study only
 - [Sekiro Combat Mechanics](https://www.youtube.com/watch?v=K3I7lQ7rj8o)
+
+## Getting started
+
+1. Install Node 18+.
+2. Install deps: `npm install`
+3. Run dev server: `npm run dev`
+4. Controls: WASD move, Space attack, Shift parry, Q/E rotate camera.
+
+## Project structure
+
+```
+assets/
+  sprites/
+  backgrounds/
+  lights/
+docs/
+  inspiration.md
+src/
+  main.js
+  renderer.js
+  lighting.js
+  input.js
+  combat.js
+vite.config.js
+index.html
+```

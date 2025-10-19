@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2.5D Isometric Souls Prototype</title>
+    <style>
+      html, body, #app {
+        margin: 0; padding: 0; width: 100%; height: 100%; background: #0c0f13; overflow: hidden;
+      }
+      .hud {
+        position: fixed; top: 12px; left: 12px; color: #e5e7eb; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji"; font-size: 14px;
+        background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 10px;
+      }
+      .hud kbd { background: #111827; border: 1px solid #374151; border-bottom-width: 3px; border-radius: 6px; padding: 2px 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div class="hud">
+      <div><strong>Move</strong>: <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> &nbsp; <strong>Attack</strong>: <kbd>J</kbd> &nbsp; <strong>Parry</strong>: <kbd>K</kbd> &nbsp; <strong>Zoom</strong>: mouse wheel &nbsp; <strong>Pan</strong>: drag</div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

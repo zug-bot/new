@@ -4,44 +4,6 @@
 import * as PIXI from 'pixi.js'
 import { TILE_W, TILE_H, cartToIso } from './engine.js'
 
-function createShadowSprite(texture) {
-  const sprite = new PIXI.Sprite(texture);
-  sprite.anchor.set(0.5, 0.5);
-  return sprite;
-}
-
-async function tryLoadTexture(url) {
-  try {
-    return await PIXI.Assets.load(url);
-  } catch (_) {
-    return null;
-  }
-}
-
-function sliceRowTextures(baseTexture, rowIndex, frameWidth, frameHeight, frameCount) {
-  const frames = [];
-  for (let i = 0; i < frameCount; i++) {
-    const rect = new PIXI.Rectangle(i * frameWidth, rowIndex * frameHeight, frameWidth, frameHeight);
-    frames.push(new PIXI.Texture({ source: baseTexture.source, frame: rect }));
-  }
-  return frames;
-}
-
-function makeAnimatedFromSheet(sheetTexture, options) {
-  const width = sheetTexture.width;
-  const height = sheetTexture.height;
-  const cols = Math.max(4, Math.round(width / 64));
-  const rows = Math.max(4, Math.round(height / 64));
-  const frameWidth = Math.floor(width / cols);
-  const frameHeight = Math.floor(height / rows);
-  const rowIndex = Math.max(0, Math.min(rows - 1, options.rowIndex ?? 0));
-  const frames = sliceRowTextures(sheetTexture, rowIndex, frameWidth, frameHeight, Math.min(8, cols));
-  const anim = new PIXI.AnimatedSprite(frames);
-  anim.animationSpeed = options.animationSpeed ?? 0.15;
-  anim.anchor.set(0.5, 0.8);
-  return anim;
-}
-
 export async function createRenderer() {
   const app = new PIXI.Application();
   await app.init({ background: 0x0e1220, resizeTo: window });
@@ -56,14 +18,6 @@ export async function createRenderer() {
     light: '/assets/lights/light_glow.png',
     shadow: '/assets/lights/shadow_blob.png'
   });
-
-  // Try to load the knight sheet provided by the user (optional)
-  const knightSheet =
-    (await tryLoadTexture('/assets/sprites/male_knight.png')) ||
-    (await tryLoadTexture('/assets/sprites/knight_male.png')) ||
-    (await tryLoadTexture('/assets/sprites/knight.png')) ||
-    (await tryLoadTexture('/assets/sprites/knight_sprites.png')) ||
-    null;
 
   // Background
   const bg = new PIXI.Sprite(assets.bg);
@@ -87,11 +41,10 @@ export async function createRenderer() {
   }
   app.stage.addChild(grid);
 
-  // Hero (prefer knight sheet if available)
-  const heroShadow = createShadowSprite(assets.shadow);
-  const hero = knightSheet
-    ? makeAnimatedFromSheet(knightSheet, { rowIndex: 1, animationSpeed: 0.15 })
-    : new PIXI.Sprite(assets.hero);
+  // Hero
+  const heroShadow = new PIXI.Sprite(assets.shadow);
+  heroShadow.anchor.set(0.5, 0.5);
+  const hero = new PIXI.Sprite(assets.hero);
   hero.anchor.set(0.5, 0.8);
   hero.x = app.renderer.width * 0.5;
   hero.y = app.renderer.height * 0.65 - TILE_H * 0.5;
@@ -100,11 +53,10 @@ export async function createRenderer() {
   app.stage.addChild(heroShadow);
   app.stage.addChild(hero);
 
-  // Enemy (use a lower row from the same sheet if available)
-  const enemyShadow = createShadowSprite(assets.shadow);
-  const enemy = knightSheet
-    ? makeAnimatedFromSheet(knightSheet, { rowIndex: 8, animationSpeed: 0.12 })
-    : new PIXI.Sprite(assets.goblin);
+  // Enemy
+  const enemyShadow = new PIXI.Sprite(assets.shadow);
+  enemyShadow.anchor.set(0.5, 0.5);
+  const enemy = new PIXI.Sprite(assets.goblin);
   enemy.anchor.set(0.5, 0.8);
   enemy.x = hero.x + TILE_W * 0.75;
   enemy.y = hero.y + TILE_H * 0.5;
@@ -112,9 +64,6 @@ export async function createRenderer() {
   enemyShadow.y = enemy.y + 24;
   app.stage.addChild(enemyShadow);
   app.stage.addChild(enemy);
-  if (!(enemy instanceof PIXI.AnimatedSprite)) {
-    enemy.tint = 0xff5a5a; // visually distinguish fallback enemy
-  }
 
   // Light overlay (additive glow)
   const light = new PIXI.Sprite(assets.light);
@@ -143,16 +92,12 @@ export async function createRenderer() {
     if (keys.has('KeyS') || keys.has('ArrowDown')) dy += 1;
     if (keys.has('KeyA') || keys.has('ArrowLeft')) dx -= 1;
     if (keys.has('KeyD') || keys.has('ArrowRight')) dx += 1;
-
-    const isMoving = dx !== 0 || dy !== 0;
-    if (isMoving) {
-      hero.x += (dx - dy) * (TILE_W / 4) * (frame.deltaTime / 16) * speed * 0.5;
-      hero.y += (dx + dy) * (TILE_H / 4) * (frame.deltaTime / 16) * speed * 0.5;
+    if (dx || dy) {
+      // Move along iso axes (approximate)
+      hero.x += (dx - dy) * (TILE_W/4) * (frame.deltaTime/16) * speed * 0.5;
+      hero.y += (dx + dy) * (TILE_H/4) * (frame.deltaTime/16) * speed * 0.5;
       heroShadow.x = hero.x;
       heroShadow.y = hero.y + 24;
-      if (hero instanceof PIXI.AnimatedSprite && !hero.playing) hero.play();
-    } else {
-      if (hero instanceof PIXI.AnimatedSprite && hero.playing) hero.gotoAndStop(0);
     }
   });
 

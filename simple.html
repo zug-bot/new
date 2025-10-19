@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isometric Souls Game - Simple</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        #healthBar {
+            width: 200px;
+            height: 20px;
+            background: #333;
+            border: 2px solid #666;
+            margin-bottom: 10px;
+        }
+        
+        #healthFill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ff6666);
+            transition: width 0.3s ease;
+        }
+        
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #ccc;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="ui">
+            <div id="healthBar">
+                <div id="healthFill"></div>
+            </div>
+            <div>Health: <span id="healthValue">100</span></div>
+            <div>Enemies: <span id="enemyCount">3</span></div>
+        </div>
+        
+        <div id="instructions">
+            WASD: Move | Mouse: Look | Left Click: Attack | Right Click: Parry | Space: Dodge
+        </div>
+    </div>
+    
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+    <script>
+        // Simplified version of the isometric souls game
+        class SimpleIsometricGame {
+            constructor() {
+                this.app = null;
+                this.player = null;
+                this.enemies = [];
+                this.keys = {};
+                this.mouse = { x: 0, y: 0, buttons: {} };
+                this.health = 100;
+                this.maxHealth = 100;
+                
+                this.init();
+            }
+            
+            init() {
+                // Initialize PIXI application
+                this.app = new PIXI.Application({
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    backgroundColor: 0x1a1a2e,
+                    antialias: true,
+                    resolution: window.devicePixelRatio || 1,
+                    autoDensity: true
+                });
+                
+                document.getElementById('gameContainer').appendChild(this.app.view);
+                
+                // Create main game container
+                this.gameContainer = new PIXI.Container();
+                this.app.stage.addChild(this.gameContainer);
+                
+                // Create layers
+                this.terrainLayer = new PIXI.Container();
+                this.entityLayer = new PIXI.Container();
+                this.lightingLayer = new PIXI.Container();
+                
+                this.gameContainer.addChild(this.terrainLayer);
+                this.gameContainer.addChild(this.entityLayer);
+                this.gameContainer.addChild(this.lightingLayer);
+                
+                this.setupInput();
+                this.createTerrain();
+                this.createPlayer();
+                this.createEnemies();
+                this.setupLighting();
+                this.startGameLoop();
+            }
+            
+            setupInput() {
+                // Keyboard input
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.code] = true;
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.code] = false;
+                });
+                
+                // Mouse input
+                this.app.view.addEventListener('mousemove', (e) => {
+                    const rect = this.app.view.getBoundingClientRect();
+                    this.mouse.x = e.clientX - rect.left;
+                    this.mouse.y = e.clientY - rect.top;
+                });
+                
+                this.app.view.addEventListener('mousedown', (e) => {
+                    this.mouse.buttons[e.button] = true;
+                });
+                
+                this.app.view.addEventListener('mouseup', (e) => {
+                    this.mouse.buttons[e.button] = false;
+                });
+                
+                // Prevent context menu
+                this.app.view.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                });
+            }
+            
+            createTerrain() {
+                const tileSize = 64;
+                const mapWidth = 20;
+                const mapHeight = 15;
+                
+                for (let x = 0; x < mapWidth; x++) {
+                    for (let y = 0; y < mapHeight; y++) {
+                        const tile = this.createIsometricTile(x, y, tileSize);
+                        this.terrainLayer.addChild(tile);
+                    }
+                }
+            }
+            
+            createIsometricTile(x, y, size) {
+                const tile = new PIXI.Graphics();
+                
+                // Convert grid coordinates to isometric screen coordinates
+                const isoX = (x - y) * (size / 2);
+                const isoY = (x + y) * (size / 4);
+                
+                // Create diamond-shaped tile
+                tile.beginFill(0x4a4a4a);
+                tile.lineStyle(1, 0x666666);
+                tile.moveTo(0, size / 2);
+                tile.lineTo(size / 2, 0);
+                tile.lineTo(size, size / 2);
+                tile.lineTo(size / 2, size);
+                tile.closePath();
+                tile.endFill();
+                
+                // Add highlight for 3D effect
+                tile.beginFill(0x6a6a6a, 0.3);
+                tile.moveTo(0, size / 2);
+                tile.lineTo(size / 2, 0);
+                tile.lineTo(size / 2, size / 2);
+                tile.closePath();
+                tile.endFill();
+                
+                tile.x = isoX;
+                tile.y = isoY;
+                
+                return tile;
+            }
+            
+            createPlayer() {
+                this.player = new PIXI.Graphics();
+                
+                // Create isometric character sprite
+                this.player.beginFill(0x4169E1);
+                this.player.drawRect(-8, -16, 16, 32);
+                this.player.endFill();
+                
+                // Add head
+                this.player.beginFill(0xFFDBB5);
+                this.player.drawCircle(0, -20, 6);
+                this.player.endFill();
+                
+                // Add weapon
+                this.player.beginFill(0xC0C0C0);
+                this.player.drawRect(8, -8, 20, 4);
+                this.player.endFill();
+                
+                this.player.x = 400;
+                this.player.y = 300;
+                
+                this.entityLayer.addChild(this.player);
+            }
+            
+            createEnemies() {
+                for (let i = 0; i < 3; i++) {
+                    const enemy = new PIXI.Graphics();
+                    
+                    // Create isometric enemy sprite
+                    enemy.beginFill(0x8B0000);
+                    enemy.drawRect(-8, -16, 16, 32);
+                    enemy.endFill();
+                    
+                    // Add head
+                    enemy.beginFill(0xFF6B6B);
+                    enemy.drawCircle(0, -20, 6);
+                    enemy.endFill();
+                    
+                    // Add weapon
+                    enemy.beginFill(0x696969);
+                    enemy.drawRect(8, -8, 15, 4);
+                    enemy.endFill();
+                    
+                    enemy.x = 200 + i * 150;
+                    enemy.y = 200 + i * 100;
+                    
+                    this.entityLayer.addChild(enemy);
+                    this.enemies.push(enemy);
+                }
+            }
+            
+            setupLighting() {
+                // Create ambient lighting
+                const ambientLight = new PIXI.Graphics();
+                ambientLight.beginFill(0x000000, 0.3);
+                ambientLight.drawRect(0, 0, this.app.screen.width, this.app.screen.height);
+                ambientLight.endFill();
+                this.lightingLayer.addChild(ambientLight);
+                
+                // Create torch lights
+                this.createTorchLight(300, 200);
+                this.createTorchLight(500, 400);
+            }
+            
+            createTorchLight(x, y) {
+                const light = new PIXI.Graphics();
+                light.beginFill(0xFFB366, 0.6);
+                light.drawCircle(x, y, 80);
+                light.endFill();
+                
+                this.lightingLayer.addChild(light);
+            }
+            
+            startGameLoop() {
+                this.app.ticker.add(() => {
+                    this.update();
+                });
+            }
+            
+            update() {
+                // Simple player movement
+                if (this.keys['KeyW']) this.player.y -= 3;
+                if (this.keys['KeyS']) this.player.y += 3;
+                if (this.keys['KeyA']) this.player.x -= 3;
+                if (this.keys['KeyD']) this.player.x += 3;
+                
+                // Simple attack
+                if (this.mouse.buttons[0]) {
+                    this.player.rotation = 0.2;
+                } else {
+                    this.player.rotation = 0;
+                }
+                
+                // Simple parry
+                if (this.mouse.buttons[2]) {
+                    this.player.tint = 0xFFFF00;
+                } else {
+                    this.player.tint = 0xFFFFFF;
+                }
+                
+                // Update camera to follow player
+                this.gameContainer.x = -this.player.x + this.app.screen.width / 2;
+                this.gameContainer.y = -this.player.y + this.app.screen.height / 2;
+            }
+        }
+        
+        // Initialize game when page loads
+        window.addEventListener('load', () => {
+            new SimpleIsometricGame();
+        });
+    </script>
+</body>
+</html>

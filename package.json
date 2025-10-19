@@ -1,0 +1,20 @@
+{
+  "name": "isometric-souls-game",
+  "version": "1.0.0",
+  "description": "Beautiful 2.5D Isometric Souls/Sekiro-like game prototype",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "npx http-server . -p 8080 -o",
+    "dev": "npx live-server --port=8080 --open=/index.html"
+  },
+  "dependencies": {
+    "pixi.js": "^7.3.2"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  },
+  "keywords": ["game", "isometric", "2.5d", "souls", "sekiro", "pixel-art"],
+  "author": "Game Developer",
+  "license": "MIT"
+}

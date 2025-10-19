@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isometric Souls Game - Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            color: #fff;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="ui">
+            <div>Isometric Souls Game - Test Version</div>
+            <div>Loading...</div>
+        </div>
+    </div>
+    
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+    <script>
+        // Simple test to verify PIXI.js is working
+        console.log('PIXI.js loaded:', PIXI);
+        
+        // Create a simple PIXI application
+        const app = new PIXI.Application({
+            width: window.innerWidth,
+            height: window.innerHeight,
+            backgroundColor: 0x1a1a2e,
+            antialias: true
+        });
+        
+        document.getElementById('gameContainer').appendChild(app.view);
+        
+        // Create a simple test sprite
+        const graphics = new PIXI.Graphics();
+        graphics.beginFill(0x4169E1);
+        graphics.drawRect(0, 0, 100, 100);
+        graphics.endFill();
+        
+        graphics.x = 100;
+        graphics.y = 100;
+        
+        app.stage.addChild(graphics);
+        
+        // Update UI
+        document.querySelector('#ui div:last-child').textContent = 'PIXI.js working! Game ready.';
+        
+        console.log('Test game initialized successfully');
+    </script>
+</body>
+</html>

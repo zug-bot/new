@@ -1,67 +1,141 @@
-# Beautiful 2.5D Isometric Souls/Sekiro-like
+# Beautiful 2.5D Isometric Souls/Sekiro-like Game
 
-A game prototype inspired by _Triangle Strategy_ and _Octopath Traveler_ (for art), and _Sekiro_ (for real-time, parry-focused, difficult combat). The goal is beautiful 2.5D isometric visuals with dynamic lighting and shadows.
+A game prototype inspired by Triangle Strategy and Octopath Traveler (for art), and Sekiro (for real-time, parry-focused, difficult combat). Features beautiful 2.5D isometric visuals with dynamic lighting and shadows.
 
-## Art Style
+## 🎮 Game Features
 
-- **2.5D Isometric**: Pixel art characters and objects on 3D-ish terrain, with dynamic camera and lighting.
-- **Inspiration**: Triangle Strategy, Octopath Traveler for environment and character style.
-- **Combat**: Real-time, high difficulty, with parrying as a core mechanic.
+- **2.5D Isometric Graphics**: Pixel art characters and objects on 3D-ish terrain
+- **Real-time Combat**: High difficulty combat with parrying as a core mechanic
+- **Dynamic Lighting**: Flickering torches and ambient lighting effects
+- **Particle Effects**: Blood, sparks, and visual feedback for combat
+- **Combo System**: Chain attacks for increased damage
+- **Parry System**: Timing-based defense with perfect parry rewards
 
-## Structure
+## 🎯 Controls
 
-- **assets/sprites/**: Place all character, enemy, and object sprites here. Use 2.5D isometric style.
-- **assets/backgrounds/**: For environment and parallax backgrounds.
-- **assets/lights/**: For lighting effects and shadows PNGs.
-- **src/**: Game code (engine, rendering, combat logic).
-- **docs/**: Reference images, links to inspirational art.
+- **WASD**: Move character
+- **Mouse**: Look around
+- **Left Click**: Attack
+- **Right Click**: Parry (timing-based defense)
+- **Space**: Dodge roll
 
-## Art Asset Sourcing
+## 🚀 Getting Started
 
-You must source or create art assets yourself. Good sources:
-- [itch.io](https://itch.io/game-assets/tag-isometric)
-- [OpenGameArt.org](https://opengameart.org/)
-- [Kenney.nl](https://kenney.nl/assets?q=isometric)
-- Search for "Octopath Traveler isometric sprites" and "Triangle Strategy pixel assets" for inspiration.
+### Prerequisites
 
-**Make sure to check licenses and attribution requirements!**
+- Node.js (for package management)
+- Modern web browser with WebGL support
 
-## Example Directory Structure
+### Installation
+
+1. Clone or download this repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open your browser to `http://localhost:8080`
+
+## 🎨 Art Style Inspiration
+
+This game draws inspiration from:
+
+- **Triangle Strategy**: Isometric pixel art style and environmental design
+- **Octopath Traveler**: Character sprites and lighting effects
+- **Sekiro**: Real-time combat mechanics and parrying system
+
+## 🏗️ Project Structure
 
 ```
 assets/
-  sprites/
-    hero_idle.png
-    hero_attack.png
-    enemy_goblin.png
-  backgrounds/
-    forest_bg.png
-  lights/
-    light_cone.png
-    shadow_blob.png
+  sprites/          # Character and enemy sprites (2.5D isometric style)
+  backgrounds/      # Environment and parallax backgrounds
+  lights/           # Lighting effects and shadow PNGs
 src/
-  main.js
-  renderer.js
+  main.js          # Main game engine and entry point
+  renderer.js      # Advanced rendering system
+  combat.js        # Combat system with parrying mechanics
 docs/
-  inspiration.md
-README.md
+  inspiration.md   # Reference images and art inspiration
 ```
 
-## Lighting & Shadow Tips
+## 🔧 Technical Features
 
-- Use semi-transparent PNGs for shadow blobs under characters.
-- Overlay light cones or glows above sprites for torch/ambient light.
-- Consider using a 2D lighting engine (like [pixi.js lighting plugin](https://github.com/pixijs/pixi-lights)) if using JS.
-- For Unity: use 2D lights and isometric tilemaps.
+### Rendering System
+- Isometric coordinate conversion
+- Dynamic lighting with flickering effects
+- Particle system for visual effects
+- Post-processing filters for mood
 
-## Placeholder Sprites
+### Combat System
+- Hitbox-based collision detection
+- Parry windows with timing mechanics
+- Combo system for chaining attacks
+- Damage numbers and visual feedback
 
-Until you find art, use colored rectangles or basic isometric tiles as placeholders.
+### Lighting System
+- Multiple light sources with different properties
+- Flickering torch effects
+- Ambient lighting overlay
+- Dynamic shadow casting
+
+## 🎮 Gameplay Mechanics
+
+### Combat
+- **Attack**: Left click to perform basic attacks
+- **Parry**: Right click with precise timing to deflect enemy attacks
+- **Dodge**: Space bar to perform invincible dodge rolls
+- **Combo**: Chain attacks for increased damage multiplier
+
+### Enemy AI
+- Aggro range detection
+- Attack cooldowns
+- Movement towards player
+- Stun effects from parries
+
+## 🔮 Future Enhancements
+
+- [ ] More enemy types with unique attack patterns
+- [ ] Boss battles with complex mechanics
+- [ ] Environmental hazards and interactive objects
+- [ ] Sound effects and music
+- [ ] Save/load system
+- [ ] Multiple levels and areas
+- [ ] Character progression and upgrades
+
+## 📚 Art Asset Sources
+
+For finding appropriate 2.5D isometric sprites:
+
+- [itch.io](https://itch.io) - Indie game assets
+- [OpenGameArt.org](https://opengameart.org) - Open source game art
+- [Kenney.nl](https://kenney.nl) - Free game assets
+- [Spriters Resource](https://www.spriters-resource.com) - Sprite references
+
+## 🎨 License
+
+This project is for educational and demonstration purposes. Make sure to check licenses and attribution requirements for any external assets used.
+
+## 🤝 Contributing
+
+Feel free to contribute by:
+- Adding new enemy types
+- Improving the combat system
+- Creating new visual effects
+- Adding sound effects
+- Optimizing performance
+
+## 📖 References
+
+- [Octopath Traveler Art Style Analysis](https://example.com)
+- [Triangle Strategy Pixel Art](https://example.com)
+- [Sekiro Combat Mechanics](https://example.com)
 
 ---
-use. https://www.spriters-resource.com/ ccreate a beautiful 2.5d isometric souls/sekiro like - art inspired by triangle strategy octopath traveller but with real time difficult combat with parrying. Webcrawl through the internet to find appropriate sprites but use 2.5d and make it beautiful with lighting effects and shadows
-## References
 
-- [Octopath Traveler Art Style Analysis](https://www.youtube.com/watch?v=9wZ9rV1dXDc)
-- [Triangle Strategy Pixel Art](https://www.spriters-resource.com/pc_computer/trianglestrategy/)
-- [Sekiro Combat Mechanics](https://www.youtube.com/watch?v=K3I7lQ7rj8o)
+**Note**: This is a prototype/demo. The current sprites are programmatically generated placeholders. In a full implementation, you would replace these with actual pixel art assets sourced from the recommended sites above.
